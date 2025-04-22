@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #fff;
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: rgb(161, 235, 210);/* Dark background for contrast */
+      background-image: linear-gradient(to bottom, #2c3e50, #34495e);
+      z-index: -1; /* Ensure the particles are behind the content */
+    }
+    .main_container {
+      max-width: 500px;
+      margin: 50px auto;
+      text-align: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+      color: #fff;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      background: #6a11cb;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background: #2575fc;
+    }
+    .weather-info {
+      margin-top: 20px;
+    }
+    .weather-data {
+      background-color: rgba(255, 255, 255, 0.8);
+      color: #333;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: left;
+      max-width: 500px;
+      margin: 20px auto;
+    }
+    .warning {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: rgba(255, 0, 0, 0.3);
+      color: #b71c1c;
+      font-weight: bold;
+      border-radius: 5px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="main_container">
+    <h1>Check Current Weather</h1>
+    <form id="weatherForm">
+      <label for="location">Enter Location (City Name):</label>
+      <input type="text" id="location" placeholder="e.g., Delhi" required>
+      <br>
+      <button type="submit">Get Weather</button>
+    </form>
+  </div>
+  <div class="weather-info" id="weatherInfo"></div>
+  <div class="warning" id="weatherWarning">
+    ⚠️ Weather status will appear here. Stay cautious if conditions worsen.
+  </div>
+
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 150, density: { enable: true, value_area: 800 } },
+        color: { value: "#ffffff" },
+        shape: {
+          type: "circle",
+          stroke: { width: 0, color: "#000000" },
+          polygon: { nb_sides: 5 },
+        },
+        opacity: {
+          value: 0.5,
+          random: false,
+          anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false },
+        },
+        size: {
+          value: 3,
+          random: true,
+          anim: { enable: false, speed: 40, size_min: 0.1, sync: false },
+        },
+        line_linked: {
+          enable: false,
+          distance: 150,
+          color: "#ffffff",
+          opacity: 0.4,
+          width: 1,
+        },
+        move: {
+          enable: true,
+          speed: 6,
+          direction: "bottom",
+          random: false,
+          straight: false,
+          out_mode: "out",
+          bounce: false,
+          attract: { enable: false, rotateX: 600, rotateY: 1200 },
+        },
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: false },
+          onclick: { enable: false },
+          resize: true,
+        },
+      },
+      retina_detect: true,
+    });
+
+    const apiKey = '7767a32dbe2a477b8ec51046241910';
+
+    document.getElementById('weatherForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const location = document.getElementById('location').value;
+      const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}&aqi=no`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          displayWeather(data);
+          updateWarning(data);
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+    });
+
+    function displayWeather(data) {
+      const weatherDiv = document.getElementById('weatherInfo');
+      const weatherHTML = `
+        <div class="weather-data">
+          <h2>Weather in ${data.location.name}, ${data.location.country}</h2>
+          <p><strong>Temperature:</strong> ${data.current.temp_c}°C</p>
+          <p><strong>Condition:</strong> ${data.current.condition.text}</p>
+          <p><strong>Wind Speed:</strong> ${data.current.wind_kph} kph</p>
+          <p><strong>Humidity:</strong> ${data.current.humidity}%</p>
+        </div>
+      `;
+      weatherDiv.innerHTML = weatherHTML;
+    }
+
+    function updateWarning(data) {
+      const warningDiv = document.getElementById('weatherWarning');
+      const condition = data.current.condition.text.toLowerCase();
+      const warningConditions = ['rain', 'storm', 'snow', 'fog', 'thunder', 'hail'];
+
+      if (warningConditions.some(word => condition.includes(word))) {
+        warningDiv.textContent = `⚠️ Warning: The current weather (${data.current.condition.text}) is not favorable. Please take precautions!`;
+        warningDiv.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
+      } else {
+        warningDiv.textContent = `✔️ The weather is fine (${data.current.condition.text}). Enjoy your day!`;
+        warningDiv.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+      }
+    }
+  </script>
+</body>
+</html>

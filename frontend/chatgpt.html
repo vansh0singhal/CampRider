@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatGPT Integration</title>
+  <style>
+    body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.chat-container {
+  width: 400px;
+  height: 600px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: white;
+}
+
+#chat-box {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  border-bottom: 1px solid #ddd;
+}
+
+#user-input {
+  width: 80%;
+  padding: 10px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+}
+
+#send-btn {
+  width: 20%;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+#send-btn:hover {
+  background-color: #45a049;
+}
+
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div id="chat-box"></div>
+    <input type="text" id="user-input" placeholder="Type your message..." />
+    <button id="send-btn">Send</button>
+  </div>
+  
+  <script src="script.js"></script>
+</body>
+<script>
+    const apiKey = 'YOUR_OPENAI_API_KEY';  // Replace with your actual API key
+
+const sendBtn = document.getElementById('send-btn');
+const userInput = document.getElementById('user-input');
+const chatBox = document.getElementById('chat-box');
+
+sendBtn.addEventListener('click', async () => {
+  const message = userInput.value.trim();
+  if (message === '') return;
+
+  // Display the user's message
+  appendMessage('You', message);
+  userInput.value = '';
+
+  // Call ChatGPT API
+  const response = await getChatGPTResponse(message);
+  appendMessage('ChatGPT', response);
+});
+
+function appendMessage(sender, message) {
+  const messageElement = document.createElement('div');
+  messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+  chatBox.appendChild(messageElement);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+async function getChatGPTResponse(message) {
+  const url = 'https://api.openai.com/v1/chat/completions';
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${apiKey}`
+  };
+  
+  const body = JSON.stringify({
+    model: 'gpt-3.5-turbo',
+    messages: [{ role: 'user', content: message }]
+  });
+
+  try {
+    const response = await fetch(url, { method: 'POST', headers, body });
+    const data = await response.json();
+    return data.choices[0].message.content;
+  } catch (error) {
+    console.error('Error:', error);
+    return 'Sorry, something went wrong. Please try again.';
+  }
+}
+
+</script>
+</html>

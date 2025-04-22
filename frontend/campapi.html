@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campflare API</title>
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 20px;
+}
+
+input, button {
+  padding: 10px;
+  margin: 10px;
+}
+
+#campgroundData {
+  margin-top: 20px;
+}
+
+  </style>
+</head>
+<body>
+  <h1>Campflare API Test</h1>
+
+  <input type="text" id="campgroundId" placeholder="Enter Campground ID">
+  <button onclick="fetchCampground()">Fetch Campground</button>
+
+  <div id="campgroundData"></div>
+
+  <script>
+    async function fetchCampground() {
+  const campgroundId = document.getElementById('campgroundId').value;
+
+  if (!campgroundId) {
+    alert('Please enter a campground ID.');
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:3000/campground?id=${campgroundId}`);
+    
+    if (response.ok) {
+      const data = await response.json();
+      displayCampgroundData(data);
+    } else {
+      alert('Error fetching campground data.');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('An error occurred while fetching data.');
+  }
+}
+
+function displayCampgroundData(data) {
+  const campgroundDiv = document.getElementById('campgroundData');
+  campgroundDiv.innerHTML = `
+    <h2>${data.name}</h2>
+    <p><strong>Description:</strong> ${data.shortDescription || 'No description available'}</p>
+    <p><strong>Number of Campsites:</strong> ${data.numberOfCampsites}</p>
+    <a href="${data.bookingLink}" target="_blank">Book Now</a>
+  `;
+}
+
+  </script>
+</body>
+</html>
+

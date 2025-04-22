@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rishikesh Camping Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .header {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1504280390367-361c6d9f38f4');
+            background-size: cover;
+            background-position: center;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .filters {
+            background: #f5f5f5;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: none;
+            background: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .filter-btn:hover {
+            background: #45a049;
+        }
+
+        .filter-btn.active {
+            background: #2E7D32;
+        }
+
+        .campsites-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .campsite-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .campsite-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .campsite-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .campsite-info {
+            padding: 20px;
+        }
+
+        .campsite-info h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .campsite-info p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .price {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+
+        .features {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            background: #e9e9e9;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            .campsites-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>Discover Camping Sites</h1>
+            <p>Experience the ultimate adventure with camprider</p>
+        </div>
+    </div>
+
+    <div class="filters">
+        <button class="filter-btn active" data-filter="all">All Campsites</button>
+        <button class="filter-btn" data-filter="luxury">Luxury Camping</button>
+        <button class="filter-btn" data-filter="budget">Budget Friendly</button>
+        <button class="filter-btn" data-filter="riverside">Riverside</button>
+        <button class="filter-btn" data-filter="adventure">Adventure</button>
+    </div>
+
+    <div class="campsites-container" id="campsitesContainer">
+        <!-- Campsites will be dynamically added here -->
+    </div>
+
+    <script>
+        const campsites = [
+            {
+                id:1,
+                name: "Riverside Glamping Resort",
+                description: "Luxury tents with modern amenities right by the Ganges",
+                price: "₹4,500/night",
+                image: "https://images.unsplash.com/photo-1537225228614-56cc3556d7ed",
+                features: ["Wi-Fi", "Attached Bathroom", "Restaurant", "River View"],
+                category: ["luxury", "riverside"]
+            },
+            {
+                id:1,
+                name: "Adventure Camp Valley",
+                description: "Basic camping experience with beautiful mountain views",
+                price: "₹1,500/night",
+                image: "https://images.unsplash.com/photo-1504851149312-7a075b496cc7",
+                features: ["Bonfire", "Shared Bathroom", "Activities", "Mountain View"],
+                category: ["budget", "adventure"]
+            },
+            {
+                id:1,
+                name: "Green Valley Camps",
+                description: "Peaceful camping surrounded by dense forest",
+                price: "₹2,500/night",
+                image: "https://images.unsplash.com/photo-1545572695-789c1407474c",
+                features: ["Nature Trails", "Meditation Area", "Organic Food"],
+                category: ["budget", "riverside"]
+            },
+            {
+                id:1,
+                name: "Yoga Retreat Camp",
+                description: "Luxurious camping with daily yoga sessions",
+                price: "₹5,500/night",
+                image: "https://images.unsplash.com/photo-1504851149312-7a075b496cc7",
+                features: ["Yoga Hall", "Spa", "Organic Food", "Meditation"],
+                category: ["luxury"]
+            },
+            {
+                id:1,
+                name: "Ganga View Camping",
+                description: "Premium camping experience with direct Ganga views",
+                price: "₹3,500/night",
+                image: "https://images.unsplash.com/photo-1517823382935-51bfcb0ec6bc",
+                features: ["River View", "Private Beach", "Rafting", "Cafe"],
+                category: ["luxury", "riverside", "adventure"]
+            },
+            {
+                id:1,
+                name: "Mountain Echo Camp",
+                description: "Secluded camping in the hills with panoramic views",
+                price: "₹2,000/night",
+                image: "https://images.unsplash.com/photo-1510312305653-8ed496efae75",
+                features: ["Trekking", "Campfire", "Mountain View"],
+                category: ["budget", "adventure"]
+            },
+            {
+                id:1,
+                name: "Spiritual Retreat Camp",
+                description: "Traditional camping with focus on spiritual activities",
+                price: "₹3,000/night",
+                image: "https://images.unsplash.com/photo-1631635589499-afd87d52bf64",
+                features: ["Meditation", "Yoga", "Vegetarian Food", "Library"],
+                category: ["luxury"]
+            },
+            {
+                id:1,
+                name: "Beach Camp Adventure",
+                description: "Camping on the sandy beaches of Ganga",
+                price: "₹1,800/night",
+                image: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7",
+                features: ["Beach Access", "Water Sports", "Bonfire", "Basic Amenities"],
+                category: ["budget", "riverside", "adventure"]
+            },
+            {
+                id:1,
+                name: "Forest Haven Camps",
+                description: "Eco-friendly camping in the forest reserve",
+                price: "₹2,800/night",
+                image: "https://images.unsplash.com/photo-1504851149312-7a075b496cc7",
+                features: ["Nature Walks", "Bird Watching", "Eco-friendly", "Guide"],
+                category: ["budget"]
+            },
+            {
+                id:1,
+                name: "Luxury Safari Tents",
+                description: "Experience camping with premium amenities and services",
+                price: "₹6,000/night",
+                image: "https://images.unsplash.com/photo-1533873984035-25970ab07461",
+                features: ["AC", "Private Butler", "Gourmet Food", "Spa Services"],
+                category: ["luxury"]
+            },
+            {
+        id: 2,
+        name: "Nagarhole Forest Retreat",
+        description: "Immersive wildlife camping experience in the heart of Nagarhole National Park",
+        price: "₹4,800/night",
+        image: "https://images.unsplash.com/photo-1547720074-e65ac1a46a9d",
+        features: ["Wildlife Safari", "Guided Nature Walks", "Tiger Spotting", "Forest Watchtower"],
+        category: ["adventure", "wildlife", "budget"]
+    },
+    {
+        id: 2,
+        name: "Bamboo Forest Eco-Camp",
+        description: "Sustainable camping amidst dense bamboo forests and diverse wildlife",
+        price: "₹3,200/night",
+        image: "https://images.unsplash.com/photo-1536016030319-90c53f80b1df",
+        features: ["Eco-friendly Lodging", "Bird Watching", "Organic Meals", "Conservation Education"],
+        category: ["budget", "wildlife", "eco-friendly"]
+    },
+    {
+        id: 2,
+        name: "Luxury Wildlife Wilderness Resort",
+        description: "Premium wildlife camping with luxurious tents and exclusive safari experiences",
+        price: "₹7,500/night",
+        image: "https://images.unsplash.com/photo-1547720074-e65ac1a46a9d",
+        features: ["Private Safari Jeep", "Gourmet Dining", "Naturalist Guides", "Infinity Pool", "Spa Services"],
+        category: ["luxury", "wildlife"]
+    },
+    {
+        id: 2,
+        name: "River Edge Wildlife Camp",
+        description: "Camping on the banks of Kaveri River with rich wildlife surroundings",
+        price: "₹3,800/night",
+        image: "https://images.unsplash.com/photo-1519659528534-7fd733a832a0",
+        features: ["River View", "Evening Wildlife Walks", "Riverside Camping", "Local Tribal Interaction"],
+        category: ["budget", "riverside", "wildlife", "adventure"]
+    },
+    {
+        id: 2,
+        name: "Brahmagiri Wildlife Sanctuary Camp",
+        description: "Secluded camping experience in one of Karnataka's most biodiverse regions",
+        price: "₹2,900/night",
+        image: "https://images.unsplash.com/photo-1510312305653-8ed496efae75",
+        features: ["Elephant Spotting", "Trekking", "Night Safari", "Campfire Stories"],
+        category: ["adventure", "wildlife", "budget"]
+    },
+    {
+        id: 2,
+        name: "Coorg Wildlife Photography Camp",
+        description: "Specialized camping for wildlife photographers and nature enthusiasts",
+        price: "₹5,500/night",
+        image: "https://images.unsplash.com/photo-1547720074-e65ac1a46a9d",
+        features: ["Professional Photography Guides", "Hidden Wildlife Spots", "Camera Equipment Support", "Workshop Sessions"],
+        category: ["luxury", "wildlife"]
+    },
+    {
+        id: 2,
+        name: "Forest Meditation Retreat",
+        description: "Wellness-focused wildlife camping with spiritual connections to nature",
+        price: "₹4,200/night",
+        image: "https://images.unsplash.com/photo-1631635589499-afd87d52bf64",
+        features: ["Meditation Sessions", "Nature Healing", "Yoga", "Wildlife Sound Therapy"],
+        category: ["luxury", "wildlife"]
+    },
+    {
+        id: 2,
+        name: "Adventure Base Camp Coorg",
+        description: "Rustic camping with multiple wildlife and adventure activities",
+        price: "₹2,500/night",
+        image: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7",
+        features: ["Tent Camping", "Bonfire", "Wildlife Tracking", "Mountain Biking"],
+        category: ["budget", "adventure", "wildlife"]
+    },
+    {
+        id: 2,
+        name: "Riverside Wildlife Eco-Lodge",
+        description: "Sustainable camping experience focusing on local wildlife conservation",
+        price: "₹3,600/night",
+        image: "https://images.unsplash.com/photo-1533873984035-25970ab07461",
+        features: ["Conservation Programs", "Local Ecosystem Tours", "Sustainable Practices", "Educational Workshops"],
+        category: ["eco-friendly", "wildlife", "budget"]
+    },
+    {
+        id: 2,
+        name: "Elite Wildlife Safari Camp",
+        description: "Ultra-luxurious wildlife camping with top-tier amenities and exclusive experiences",
+        price: "₹9,000/night",
+        image: "https://images.unsplash.com/photo-1533873984035-25970ab07461",
+        features: ["Private Wildlife Expert", "Gourmet Cuisine", "Luxury Tents", "Personal Safari Vehicle", "Evening Wildlife Documentaries"],
+        category: ["luxury", "wildlife"]
+    },
+
+    {
+            id: 3,
+            name: "Spiti High Altitude Wilderness Camp",
+            description: "Remote camping experience in the rugged Spiti Valley landscape",
+            price: "₹3,500/night",
+            image: "https://images.unsplash.com/photo-1547720074-e65ac1a46a9d",
+            features: ["High Altitude Camping", "Mountain Views", "Stargazing", "Tibetan Culture Exposure"],
+            category: ["adventure", "mountain", "budget"]
+        },
+        {
+            id: 3,
+            name: "Key Monastery Eco Camp",
+            description: "Sustainable camping near the historic Key Monastery in Spiti",
+            price: "₹3,200/night",
+            image: "https://images.unsplash.com/photo-1519659528534-7fd733a832a0",
+            features: ["Monastery Proximity", "Buddhist Meditation", "Local Homestay Experience", "Nature Walks"],
+            category: ["budget", "cultural", "eco-friendly"]
+        },
+        {
+            id: 3,
+            name: "Spiti Valley Adventure Base",
+            description: "Adventurous camping for trekkers and nature enthusiasts",
+            price: "₹2,800/night",
+            image: "https://images.unsplash.com/photo-1510312305653-8ed496efae75",
+            features: ["Trekking Expeditions", "Photography Workshops", "Local Guide", "Campfire Sessions"],
+            category: ["adventure", "budget", "mountain"]
+        },
+        {
+            id: 3,
+            name: "Chandratal Lake Camping",
+            description: "Camping by the mystical Chandratal Lake",
+            price: "₹4,000/night",
+            image: "https://images.unsplash.com/photo-1533873984035-25970ab07461",
+            features: ["Lake Side Camping", "Photography", "Trekking", "Stargazing"],
+            category: ["adventure", "mountain", "luxury"]
+        },
+        {
+            id: 3,
+            name: "Kibber Wildlife Retreat",
+            description: "Wildlife and nature camping in Kibber Village",
+            price: "₹3,600/night",
+            image: "https://images.unsplash.com/photo-1536016030319-90c53f80b1df",
+            features: ["Wildlife Spotting", "Bird Watching", "Local Culture", "Nature Photography"],
+            category: ["wildlife", "budget", "cultural"]
+        },
+        {
+            id: 3,
+            name: "Pin Valley Wilderness Camp",
+            description: "Remote camping in the pristine Pin Valley National Park",
+            price: "₹3,300/night",
+            image: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7",
+            features: ["National Park Access", "Snow Leopard Tracking", "Guided Treks", "Cultural Interactions"],
+            category: ["adventure", "wildlife", "budget"]
+        },
+        {
+            id: 3,
+            name: "Dhankar Lake Expedition Camp",
+            description: "High-altitude camping near the historic Dhankar Monastery",
+            price: "₹3,700/night",
+            image: "https://images.unsplash.com/photo-1547720074-e65ac1a46a9d",
+            features: ["Lake Trekking", "Monastery Visit", "Meditation", "Landscape Photography"],
+            category: ["adventure", "cultural", "mountain"]
+        },
+        {
+            id: 3,
+            name: "Spiti River Camping Experience",
+            description: "Riverside camping along the scenic Spiti River",
+            price: "₹3,100/night",
+            image: "https://images.unsplash.com/photo-1519659528534-7fd733a832a0",
+            features: ["River Side Camping", "Fishing", "Nature Walks", "Local Cuisine"],
+            category: ["budget", "riverside", "adventure"]
+        },
+        {
+            id: 3,
+            name: "Tabo Monastery Eco Retreat",
+            description: "Sustainable camping near the ancient Tabo Monastery",
+            price: "₹3,500/night",
+            image: "https://images.unsplash.com/photo-1510312305653-8ed496efae75",
+            features: ["Monastery Proximity", "Cultural Workshops", "Sustainable Living", "Meditation"],
+            category: ["cultural", "eco-friendly", "budget"]
+        },
+        {
+            id: 4,
+            name: "Palolem Beach Glamping",
+            description: "Luxurious beach camping in the serene Palolem Beach",
+            price: "₹4,500/night",
+            image: "https://images.unsplash.com/photo-1533873984035-25970ab07461",
+            features: ["Beach Access", "Water Sports", "Sunset Views", "Live Music"],
+            category: ["luxury", "beach", "adventure"]
+        },
+        {
+            id: 4,
+            name: "North Goa Beach Retreat",
+            description: "Vibrant beach camping experience in North Goa",
+            price: "₹3,000/night",
+            image: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7",
+            features: ["Party Zone", "Beach Activities", "Bonfire", "Group Events"],
+            category: ["budget", "beach", "adventure"]
+        },
+        {
+            id: 4,
+            name: "Eco Beach Camp",
+            description: "Sustainable beach camping with focus on environmental conservation",
+            price: "₹3,800/night",
+            image: "https://images.unsplash.com/photo-1536016030319-90c53f80b1df",
+            features: ["Eco-friendly Practices", "Conservation Workshops", "Organic Meals", "Beach Cleanup"],
+            category: ["eco-friendly", "beach", "budget"]
+        },
+        {
+            id: 5,
+            name: "Pangong Lake Wilderness Camp",
+            description: "Camping beside the stunning Pangong Lake",
+            price: "₹4,200/night",
+            image: "https://images.unsplash.com/photo-1547720074-e65ac1a46a9d",
+            features: ["Lake View", "High Altitude Experience", "Stargazing", "Photography"],
+            category: ["adventure", "mountain", "luxury"]
+        },
+        {
+            id: 5,
+            name: "Nubra Valley Desert Camp",
+            description: "Unique camping in the cold desert of Ladakh",
+            price: "₹3,600/night",
+            image: "https://images.unsplash.com/photo-1519659528534-7fd733a832a0",
+            features: ["Desert Landscape", "Camel Safari", "Local Culture", "Mountain Views"],
+            category: ["adventure", "budget", "cultural"]
+        },
+        {
+            id: 5,
+            name: "Ladakh Mountain Expedition Camp",
+            description: "Rugged camping for adventure seekers",
+            price: "₹3,900/night",
+            image: "https://images.unsplash.com/photo-1510312305653-8ed496efae75",
+            features: ["Trekking", "Mountain Biking", "Local Guides", "Camping Skills Workshop"],
+            category: ["adventure", "budget", "mountain"]
+        },
+        {
+            id: 6,
+            name: "Royal Desert Luxury Camp",
+            description: "Luxurious camping experience in the Pushkar desert",
+            price: "₹5,500/night",
+            image: "https://images.unsplash.com/photo-1533873984035-25970ab07461",
+            features: ["Luxury Tents", "Cultural Performances", "Camel Safari", "Gourmet Dining"],
+            category: ["luxury", "cultural", "desert"]
+        },
+        {
+            id: 6,
+            name: "Pushkar Camel Fair Camping",
+            description: "Seasonal camping during the famous Pushkar Camel Fair",
+            price: "₹3,200/night",
+            image: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7",
+            features: ["Camel Fair Access", "Traditional Music", "Local Crafts", "Desert Experience"],
+            category: ["budget", "cultural", "adventure"]
+        },
+        {
+            id: 6,
+            name: "Eco Desert Retreat",
+            description: "Sustainable desert camping with minimal environmental impact",
+            price: "₹3,800/night",
+            image: "https://images.unsplash.com/photo-1536016030319-90c53f80b1df",
+            features: ["Eco-friendly Practices", "Stargazing", "Nature Walks", "Meditation"],
+            category: ["eco-friendly", "budget", "desert"]
+        },
+        {
+            id: 7,
+            name: "Havelock Island Beach Camp",
+            description: "Tropical island camping with pristine beach views",
+            price: "₹4,000/night",
+            image: "https://images.unsplash.com/photo-1533873984035-25970ab07461",
+            features: ["Beach Access", "Snorkeling", "Coral Reef Exploration", "Water Sports"],
+            category: ["luxury", "beach", "adventure"]
+        },
+        {
+            id: 7,
+            name: "Neil Island Eco Camp",
+            description: "Sustainable camping on the beautiful Neil Island",
+            price: "₹3,500/night",
+            image: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7",
+            features: ["Marine Conservation", "Kayaking", "Organic Food", "Nature Walks"],
+            category: ["eco-friendly", "beach", "budget"]
+        },
+        {
+            id: 7,
+            name: "Andaman Adventure Base",
+            description: "Active camping with multiple water and land activities",
+            price: "₹3,800/night",
+            image: "https://images.unsplash.com/photo-1536016030319-90c53f80b1df",
+            features: ["Scuba Diving", "Trekking", "Island Hopping", "Sunset Cruises"],
+            category: ["adventure", "beach", "budget"]
+        },
+        {
+            id: 8,
+            name: "Rainforest Canopy Retreat",
+            description: "Elevated tree house camping in the lush Wayanad forests",
+            price: "₹4,500/night",
+            image: "https://images.unsplash.com/photo-1533873984035-25970ab07461",
+            features: ["Treetop Accommodation", "Wildlife Viewing", "Guided Forest Walks", "Birdwatching"],
+            category: ["luxury", "nature", "wildlife"]
+        },
+        {
+            id: 8,
+            name: "Eco Tree House Experience",
+            description: "Sustainable tree house camping with minimal environmental impact",
+            price: "₹3,200/night",
+            image: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7",
+            features: ["Eco-friendly Design", "Local Cuisine", "Nature Immersion", "Conservation Program"],
+            category: ["eco-friendly", "budget", "nature"]
+        },
+        {
+            id: 8,
+            name: "Wayanad Adventure Tree Camp",
+            description: "Tree house camping for adventure enthusiasts",
+            price: "₹3,800/night",
+            image: "https://images.unsplash.com/photo-1536016030319-90c53f80b1df",
+            features: ["Trekking", "Mountain Biking", "Waterfall Exploration", "Campfire"],
+            category: ["adventure", "budget", "nature"]
+        },
+        {
+            id: 9,
+            name: "Zanskar Frozen River Expedition",
+            description: "Winter camping on the legendary Chadar Trek route",
+            price: "₹5,500/night",
+            image: "https://images.unsplash.com/photo-1547720074-e65ac1a46a9d",
+            features: ["Extreme Winter Camping", "Frozen River Trek", "Local Survival Skills", "Photography"],
+            category: ["adventure", "mountain", "extreme"]
+        },
+        {
+            id: 9,
+            name: "Zanskar Mountain Wilderness Camp",
+            description: "Remote camping in the pristine Zanskar mountain range",
+            price: "₹4,200/night",
+            image: "https://images.unsplash.com/photo-1519659528534-7fd733a832a0",
+            features: ["High Altitude Trekking", "Buddhist Monastery Visits", "Mountain Views", "Cultural Interaction"],
+            category: ["adventure", "cultural", "budget"]
+        },
+        {
+            id: 9,
+            name: "Zanskar Valley Eco Retreat",
+            description: "Sustainable camping with minimal environmental footprint",
+            price: "₹3,900/night",
+            image: "https://images.unsplash.com/photo-1510312305653-8ed496efae75",
+            features: ["Conservation Focus", "Local Homestay", "Nature Walks", "Traditional Cuisine"],
+            category: ["eco-friendly", "budget", "cultural"]
+        }
+        ];
+
+        function createCampsiteCard(campsite) {
+            return `
+                <div class="campsite-card" data-categories="${campsite.category.join(' ')}">
+                    <img src="${campsite.image}" alt="${campsite.name}" class="campsite-image">
+                    <div class="campsite-info">
+                        <h3>${campsite.name}</h3>
+                        <p>${campsite.description}</p>
+                        <div class="price">${campsite.price}</div>
+                        <div class="features">
+                            ${campsite.features.map(feature => `<span class="feature">${feature}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+
+          // Extract the id from the URL
+          function getUrlParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);  // Return the value of 'id'
+        }
+
+
+        function displayCampsitesById() {
+            const campsiteId = getUrlParam('id');  // Get the 'id' from URL
+            const container = document.getElementById('campsitesContainer');
+            const filteredCampsites = campsites.filter(campsite => campsite.id === parseInt(campsiteId));  // Filter by ID
+
+            if (filteredCampsites.length > 0) {
+                container.innerHTML = filteredCampsites.map(createCampsiteCard).join('');
+            } else {
+                container.innerHTML = '<p>No campsite found.</p>';
+            }
+        }
+
+        // Initialize with all campsites
+        displayCampsitesById();
+
+
+        // Add filter functionality
+         // Add filter functionality
+         document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                // Update active state
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+
+                // Filter campsites
+                displayCampsites(e.target.dataset.filter);
+            });
+        });                        
+    </script>
+</body>
+</html>
